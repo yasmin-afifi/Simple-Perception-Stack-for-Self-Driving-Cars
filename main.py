@@ -90,3 +90,21 @@ def inv_perspective_transform(img):
     warped = cv2.warpPerspective(img, Minv, img_size)
     
     return warped
+
+def thresholding(img, l_thresh=(195, 255), b_thresh=(140, 200)):
+    l_LUV = cv2.cvtColor(img, cv2.COLOR_RGB2LUV)[:, :, 0]
+    l_bin = np.zeros_like(l_LUV)
+    l_bin[(l_LUV >= l_thresh[0]) & (l_LUV <= l_thresh[1])] = 1
+
+    b_LAB = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)[:, :, 2]
+    b_bin = np.zeros_like(b_LAB)
+    b_bin[(b_LAB >= b_thresh[0]) & (b_LAB <= b_thresh[1])] = 1
+
+    thresholded_img = np.zeros_like(l_LUV)
+    thresholded_img[(l_bin == 1) | (b_bin == 1)] = 1
+
+    return thresholded_img
+
+def get_hist(img):
+    hist = np.sum(img[img.shape[0]//2:,:], axis=0)
+    return hist
