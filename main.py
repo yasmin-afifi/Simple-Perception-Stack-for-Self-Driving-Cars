@@ -108,3 +108,47 @@ def thresholding(img, l_thresh=(195, 255), b_thresh=(140, 200)):
 def get_hist(img):
     hist = np.sum(img[img.shape[0]//2:,:], axis=0)
     return hist
+
+class Lane_detection:
+    def __init__(self):
+        # the value of (x) and the value of (y) in the previous frame
+        self.x = None
+        self.y = None
+        self.detected = False  #to discover if the lane detected in the previous loop 
+        # The intercepts of x for the average smoothing
+        self.topX = deque(maxlen=frameNum)
+        self.bottomX = deque(maxlen=frameNum)
+        # Recording the last intercepts for x
+        self.current_topX = None
+        self.current_bottomX = None
+        # The Polynomial coefficients: x = A(y^2) + By + C
+        self.A = deque(maxlen=frameNum)
+        self.B = deque(maxlen=frameNum)
+        self.C = deque(maxlen=frameNum)
+        self.fit = None
+        self.fitx = None
+        self.fity = None
+    def getIntercepts(self):
+        top = self.fit[2]
+        bottom = self.fit[0] * 720 ** 2 + self.fit[1] * 720 + self.fit[2]
+        return bottom,top
+
+    
+    
+    
+    
+    
+def draw(img):
+
+    out = pipeline(img)
+
+    plt.figure(figsize=(10, 6))
+    plt.subplot(221)
+    plt.imshow(img)
+    plt.title('Orginal Image')
+    plt.subplot(222)
+    plt.imshow(out)
+    plt.title('Lane Detection')
+    plt.show()
+    return
+
