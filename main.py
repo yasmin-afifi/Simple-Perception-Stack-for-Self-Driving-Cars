@@ -277,6 +277,50 @@ def VehiclePos(rightFit,leftFit):
     car_center_offset = (img_shape[1]/2 - lane_center_position) * xm_per_pix  
     
     return car_center_offset
+
+def RadiusCurvature( rightFit,leftFit):
+    """
+    for calculating the road radius of curvature 
+    :param rightFit,leftFit:
+    :return: the distance in meter of the right and left curverad
+    """
+    xleft_eval = leftFit[0] * np.max(ploty) ** 2 + leftFit[1] * np.max(ploty) + leftFit[2]
+    xright_eval = rightFit[0] * np.max(ploty) ** 2 + rightFit[1] * np.max(ploty) + rightFit[2]
+    # the meter per pixel for the y dimension   
+    ym_per_pix = 18 / 720  
+     # the meter per pixel for the x dimension
+    xm_per_pix = 3.7 / abs(xleft_eval - xright_eval)  
+
+    
+
+    y_eval = np.max(ploty)
+    left_fitx = leftFit[0] * ploty ** 2 + leftFit[1] * ploty + leftFit[2]
+    left_fit_cr = np.polyfit(ploty * ym_per_pix, left_fitx * xm_per_pix, 2)
+    left_curverad = ((1 + (2 * left_fit_cr[0] * y_eval * ym_per_pix + left_fit_cr[1]) ** 2) ** 1.5) / \
+                    np.absolute(2 * left_fit_cr[0])
+
+    right_fitx = rightFit[0] * ploty ** 2 + rightFit[1] * ploty + rightFit[2]
+    right_fit_cr = np.polyfit(ploty * ym_per_pix, right_fitx * xm_per_pix, 2)
+    right_curverad = ((1 + (2 * right_fit_cr[0] * y_eval * ym_per_pix + right_fit_cr[1]) ** 2) ** 1.5) / \
+                    np.absolute(2 * right_fit_cr[0])
+    
+    
+
+    return  right_curverad,left_curverad
+
+def vconcatResizeMin(im_list, interpolation=cv2.INTER_CUBIC):
+    wMin = min(im.shape[1] for im in im_list)
+    imListResize = [cv2.resize(im, (wMin, int(im.shape[0] * wMin / im.shape[1])), interpolation=interpolation)
+                      for im in im_list]
+    return cv2.vconcat(imListResize)
+def hconcatResizeMin(imList, interpolation=cv2.INTER_CUBIC):
+    hMin = min(im.shape[0] for im in imList)
+    imListResize = [cv2.resize(im, (int(im.shape[1] * hMin / im.shape[0]), hMin), interpolation=interpolation)
+                      for im in imList]
+    return cv2.hconcat(imListResize)
+def concatTileResize(imList2d, interpolation=cv2.INTER_CUBIC):
+    imListV = [hconcatResizeMin(imListH, interpolation=cv2.INTER_CUBIC) for imListH in imList2d]
+    return vconcatResizeMin(imListV, interpolation=cv2.INTER_CUBIC)
     
     
     
