@@ -10,3 +10,7 @@
 6. Determine the curvature of the lane and vehicle position with respect to center.
 7. Warp the detected lane boundaries back onto the original image.
 8. Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
+# 1. Calibration and Distorion Correction:
+The chessboard corners are the reference to generate objpoints and imgpoints.
+I then used the output objpoints and imgpoints to compute the camera calibration and distortion coefficients using the cv2.calibrateCamera() function.
+Matrix mtx and dist from camera calibration are applied to distortion correction to one of the test images like this one:
