@@ -14,3 +14,10 @@
 The chessboard corners are the reference to generate objpoints and imgpoints.
 I then used the output objpoints and imgpoints to compute the camera calibration and distortion coefficients using the cv2.calibrateCamera() function.
 Matrix mtx and dist from camera calibration are applied to distortion correction to one of the test images like this one:
+# 2. Thresholding:
+differences in RGB space do not correspond well to perceived differences in color. 
+That is, two colors can be close in RGB space but appear very different to humans and vice versa.
+LUV decouple the "color" (chromaticity, the UV part) and "lightness" (luminance, the L part) of color.
+Thus in object detection, it is common to match objects just based on the UV part,
+which gives invariance to changes in lighting condition.
+LAB is designed to approximate human vision. The L* component closely matches human perception of lightnessis useful for predicting small differences in color.So we will use B channel from LAB space identified yellow lanes while L channel from LUV space could detect white lanes
